@@ -1,14 +1,21 @@
 # .RECIPEPREFIX=
-all:
+BINDIR?=./bin
+BINPATH=$(BINDIR)/ping-in-bulk
 ifeq ($(OS), Windows_NT)
-	gcc -std=c99 -I .\include -o .\bin\ping-in-bulk.exe .\src\ping-in-bulk.c
-else
-	gcc -std=c99 -I ./include -o ./bin/ping-in-bulk ./src/ping-in-bulk.c
+	# := 解决递归引用问题
+	# Recursive variable 'BINPATH' references itself
+	BINPATH:=$(subst /,\,$(BINPATH)).exe
 endif
+
+all:
+	gcc -std=c99 -I ./include -o $(BINPATH) ./src/ping-in-bulk.c
 
 clean:
 ifeq ($(OS), Windows_NT)
-	del .\bin\ping-in-bulk.exe
+	del $(BINPATH)
 else
-	rm ./bin/ping-in-bulk
+	rm $(BINPATH)
 endif
+
+#test:
+#	echo ${MAKE}
